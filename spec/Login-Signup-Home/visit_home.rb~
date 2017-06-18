@@ -1,0 +1,100 @@
+require 'rails_helper'
+require 'spec_helper'
+require_relative('define_class')
+
+
+ feature 'Funzionalità Home' do  
+  scenario 'Utente preme tasto home' do
+    user=FactoryGirl.create(:user) 
+    user.save  
+    visit '/'
+
+    click_link 'CarAdvisor'
+   
+    expect(page).to have_no_content("Nome") 
+    expect(page).to have_no_content("Email") 
+
+    click_link 'Login'
+    expect(page).to have_content("Password") 
+    expect(page).to have_content("Email") 
+
+
+    click_link 'Password Dimenticata?'
+    expect(page).to have_content("Recupera Password")
+    fill_in 'password_reset_email', with: 'email@prova.inesistente'
+    click_button('Invia')
+    expect(page).to have_content("Indirizzo email non trovato")
+    fill_in 'password_reset_email', with: 'email@prova.si'
+    click_button('Invia')
+    expect(page).to have_content("Ti abbiamo inviato")
+    
+    
+    click_link 'Sign Up'
+    expect(page).to have_content("Password") 
+    expect(page).to have_content("Email") 
+    expect(page).to have_content("Nome") 
+    expect(page).to have_content("Cognome") 
+   expect(page).to have_content("Tipo") 
+
+    
+end
+end
+
+feature 'Redirect post Login' do  
+  scenario 'Utente effettua Login' do
+	user=FactoryGirl.create(:user) 
+	user.save  
+        visit '/'
+
+    click_link 'Login'
+
+    fill_in 'session_email', with: 'email@prova.si'
+    fill_in 'session_password', with: 'password'
+    click_button 'Log in'
+
+    expect(page).to have_content("Benvenuto") 
+    
+end
+end
+feature 'creazione veicoli-officine' do
+ scenario 'Utente crea veicolo'do
+
+	visit'/login'
+	
+	user=FactoryGirl.create(:user)
+        sign_in(user)
+	expect(page).to have_content("Benvenuto")
+
+	click_link 'aggiungilo ora!'
+	expect(page).to have_content("Nuovo Autoveicolo")
+	
+	fill_in 'autoveicolos_targa', with: 'BB345TE'
+        fill_in 'autoveicolos_modello', with: 'Modello Prova'
+	fill_in 'autoveicolos_kilometri', with: '94558'
+	find('#autoveicolos_carburante').find(:xpath, 'option[3]').select_option
+        click_button 'Salva Dati'
+	expect(page).to have_content("Autoveicolo aggiunto correttamente")
+
+	end
+
+end
+
+
+feature 'registrazione' do  
+  scenario 'Utente si registra' do
+    visit '/'
+
+    click_link 'Sign Up'
+
+    fill_in 'user_nome', with: 'ric'
+    fill_in 'user_cognome', with: 'cardo'
+    fill_in 'user_email', with: 'ric@cardo.si'
+    fill_in 'user_password', with: 'password'
+    find('#user_tipo').find(:xpath, 'option[1]').select_option
+    click_button 'Crea Account'
+
+    expect(page).to have_content("Controlla la tua email") 
+end
+end
+
+

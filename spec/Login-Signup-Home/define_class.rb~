@@ -1,0 +1,19 @@
+FactoryGirl.define do
+    factory :user do
+        nome "Jovanni"
+        cognome "Merelli"
+        email "email@prova.si"
+	password "password"
+        admin false
+	activated "t"
+        tipo "t"
+    end
+end
+
+def login(a)
+    visit root_path
+    click_link 'Log In'
+    fill_in 'session[email]', with: a.email
+    fill_in 'session[password]', with: a.password
+    click_button 'Log in'
+  end
